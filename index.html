@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>เว็บสุ่มเหตุการณ์แผ่นดินไหว</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+
+  .event {
+    max-width: 80%;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  img {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px;
+  }
+</style>
+</head>
+<body>
+  <div class="event">
+    <h2 id="eventTitle">สุ่มบทบาท</h2>
+    <p id="eventDescription">สุ่มเหตุการณ์</p>
+    <img id="eventImage" src="" alt="ภาพเหตุการณ์" />
+  </div>
+  <button id="randomButton" onclick="randomEvent()">สุ่มเหตุการณ์</button>
+  <button id="resetButton" onclick="resetPage()">รีเซ็ต</button>
+
+  <script>
+const events = [
+  { title: "คุณเป็นเจ้าหน้าที่", description: "เกิดน้ำท่วมใหญ่ที่สุราษฎร์ธานี ปี 2560", image: "น้ำท่วม.jpg" },
+  { title: "คุณประสบภัย", description: "เกิดน้ำท่วมใหญ่ที่สุราษฎร์ธานี ปี 2560", image: "น้ำท่วม.jpg" },
+  { title: "คุณเป็นเจ้าหน้าที่", description: "เกิดแผ่นดินไหวที่สุราษฎร์ธานี วันที่ 16 เมษายน 2555", image: "แผ่นดินไหว.jpg" },
+  { title: "คุณประสบภัย", description: "เกิดแผ่นดินไหวที่สุราษฎร์ธานี วันที่ 16 เมษายน 2555", image: "แผ่นดินไหว.jpg" },
+  { title: "คุณเป็นเจ้าหน้าที่", description: "พายุโซนร้อนปาบึกถล่มสุราษฎร์ธานี ปี 2562", image: "พายุ.jpg" },
+  { title: "คุณประสบภัย", description: "พายุโซนร้อนปาบึกถล่มสุราษฎร์ธานี ปี 2562", image: "พายุ.jpg" },
+  { title: "คุณเป็นเจ้าหน้าที่", description: "เกิดไฟป่าที่เขาสก สุราษฎร์ธานี ปี 2564", image: "ไฟป่า.jpg" },
+  { title: "คุณประสบภัย", description: "เกิดไฟป่าที่เขาสก สุราษฎร์ธานี ปี 2564", image: "ไฟป่า.jpg" },
+  { title: "คุณเป็นเจ้าหน้าที่", description: "ดินถล่มที่เขาสก สุราษฎร์ธานี ปี 2562", image: "ดินถล่ม.jpg" },
+  { title: "คุณประสบภัย", description: "ดินถล่มที่เขาสก สุราษฎร์ธานี ปี 2562", image: "ดินถล่ม.jpg" }
+];
+
+    function randomEvent() {
+      const lastEvent = JSON.parse(localStorage.getItem('lastEvent'));
+      let newEvent;
+
+      do {
+        const randomIndex = Math.floor(Math.random() * events.length);
+        newEvent = events[randomIndex];
+      } while (lastEvent && newEvent.title === lastEvent.title && newEvent.description === lastEvent.description);
+
+      document.getElementById("eventTitle").textContent = newEvent.title;
+      document.getElementById("eventDescription").textContent = newEvent.description;
+
+      // แสดงรูปภาพเหตุการณ์
+      document.getElementById("eventImage").src = `pics/${newEvent.image}`;
+
+      // บันทึกเหตุการณ์ล่าสุดใน localStorage
+      localStorage.setItem('lastEvent', JSON.stringify(newEvent));
+
+      // เพิ่มจำนวนครั้งที่กด
+      let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+      clickCount++;
+      localStorage.setItem('clickCount', clickCount);
+
+      // ปิดการใช้งานปุ่มหากกดครบ 3 ครั้ง
+      if (clickCount >= 2) {
+        document.getElementById("randomButton").disabled = true;
+      }
+    }
+
+    function initializePage() {
+      // ตรวจสอบจำนวนครั้งที่กดและล็อคปุ่มถ้ากดครบ 3 ครั้ง
+      const clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+      const lastEvent = JSON.parse(localStorage.getItem('lastEvent'));
+
+      if (clickCount >= 2) {
+        document.getElementById("randomButton").disabled = true;
+      }
+
+      if (lastEvent) {
+        // แสดงเหตุการณ์ล่าสุดหากมีอยู่ใน localStorage
+        document.getElementById("eventTitle").textContent = lastEvent.title;
+        document.getElementById("eventDescription").textContent = lastEvent.description;
+        document.getElementById("eventImage").src = `pics/${lastEvent.image}`;
+      }
+    }
+
+    function resetPage() {
+      // รีเซ็ตจำนวนครั้งที่กดและเปิดใช้งานปุ่ม
+      localStorage.removeItem('clickCount');
+      localStorage.removeItem('lastEvent');
+      document.getElementById("randomButton").disabled = false;
+      document.getElementById("eventTitle").textContent = 'เหตุการณ์แผ่นดินไหวสุ่ม';
+      document.getElementById("eventDescription").textContent = 'ข้อมูลเหตุการณ์จะปรากฏที่นี่';
+      document.getElementById("eventImage").src = '';
+    }
+
+    // ตรวจสอบและเริ่มต้นสถานะเมื่อโหลดหน้าเว็บ
+    initializePage();
+  </script>
+</body>
+</html>
