@@ -21,7 +21,8 @@
   img {
     max-width: 80%;
     height: auto;
-    margin-bottom: 20px;
+    margin: 0 auto 20px; /* จัดกึ่งกลางแนวนอน */
+    display: none; /* ซ่อนรูปภาพในตอนแรก */
   }
 
   button {
@@ -69,6 +70,7 @@ const events = [
 
       // แสดงรูปภาพเหตุการณ์
       document.getElementById("eventImage").src = `pics/${newEvent.image}`;
+      document.getElementById("eventImage").style.display = "block"; // แสดงรูปภาพ
 
       // บันทึกเหตุการณ์ล่าสุดใน localStorage
       localStorage.setItem('lastEvent', JSON.stringify(newEvent));
@@ -78,14 +80,14 @@ const events = [
       clickCount++;
       localStorage.setItem('clickCount', clickCount);
 
-      // ปิดการใช้งานปุ่มหากกดครบ 3 ครั้ง
+      // ปิดการใช้งานปุ่มหากกดครบ 2 ครั้ง
       if (clickCount >= 2) {
         document.getElementById("randomButton").disabled = true;
       }
     }
 
     function initializePage() {
-      // ตรวจสอบจำนวนครั้งที่กดและล็อคปุ่มถ้ากดครบ 3 ครั้ง
+      // ตรวจสอบจำนวนครั้งที่กดและล็อคปุ่มถ้ากดครบ 2 ครั้ง
       const clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
       const lastEvent = JSON.parse(localStorage.getItem('lastEvent'));
 
@@ -98,6 +100,7 @@ const events = [
         document.getElementById("eventTitle").textContent = lastEvent.title;
         document.getElementById("eventDescription").textContent = lastEvent.description;
         document.getElementById("eventImage").src = `pics/${lastEvent.image}`;
+        document.getElementById("eventImage").style.display = "block"; // แสดงรูปภาพ
       }
     }
 
@@ -109,6 +112,7 @@ const events = [
       document.getElementById("eventTitle").textContent = 'เหตุการณ์แผ่นดินไหวสุ่ม';
       document.getElementById("eventDescription").textContent = 'ข้อมูลเหตุการณ์จะปรากฏที่นี่';
       document.getElementById("eventImage").src = '';
+      document.getElementById("eventImage").style.display = "none"; // ซ่อนรูปภาพ
     }
 
     // ตรวจสอบและเริ่มต้นสถานะเมื่อโหลดหน้าเว็บ
